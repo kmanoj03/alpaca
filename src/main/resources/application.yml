@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: alpaca-options-scanner
+  datasource:
+    url: jdbc:h2:file:./data/scanner;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+
+alpaca:
+  data-base-url: https://data.alpaca.markets
+  trade-base-url: https://paper-api.alpaca.markets
+  api-key: ${ALPACA_API_KEY:}
+  api-secret: ${ALPACA_API_SECRET:}
+  chain-page-limit: 1000
+  contracts-page-limit: 10000
+
+scanner:
+  defaults:
+    min-delta: 0.05
+    max-delta: 0.15
+    min-theta: 0.015
+    min-dte: 7
+    max-dte: 45
+    min-premium: 0.20
+    max-spread: 0.20
+    min-open-interest: 500
+    min-volume: 0
+  ranking:
+    top-n: 25
+    weights:
+      premium: 0.20
+      liquidity: 0.18
+      theta: 0.12
+      delta: 0.12
+      distance: 0.12
+      dte: 0.08
+      iv: 0.10
+      expected-move: 0.08

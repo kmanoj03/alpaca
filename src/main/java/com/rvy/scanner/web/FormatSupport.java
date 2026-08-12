@@ -21,6 +21,18 @@ public class FormatSupport {
         return "$" + String.format(Locale.US, "%,.2f", value);
     }
 
+    public String money(double value) {
+        return money(Double.valueOf(value));
+    }
+
+    public String px(double value) {
+        return px(Double.valueOf(value));
+    }
+
+    public String score(double value) {
+        return score(Double.valueOf(value));
+    }
+
     public String strike(double value) {
         if (value == Math.rint(value)) {
             return "$" + String.format(Locale.US, "%,.0f", value);

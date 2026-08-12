@@ -17,9 +17,10 @@ import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.web.FormatSupport;
 import com.rvy.scanner.web.StrategyParameterFactory;
+import com.rvy.scanner.web.ViewSupportAdvice;
 
 @WebMvcTest(controllers = ScannerController.class)
-@Import({StrategyParameterFactory.class, ScannerProperties.class, FormatSupport.class})
+@Import({StrategyParameterFactory.class, ScannerProperties.class, FormatSupport.class, ViewSupportAdvice.class})
 class ScannerControllerTest {
 
     @Autowired

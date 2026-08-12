@@ -28,14 +28,21 @@ No order or trading endpoints exist.
 Requirements: **Java 17** and **Maven 3.9+**.
 
 1. Create an [Alpaca paper trading](https://app.alpaca.markets/signup) account and generate API keys.
-2. Export credentials (do not hard-code them):
+2. Put them in a **project-root** `.env` file (already gitignored):
 
 ```bash
-export ALPACA_API_KEY=your_paper_key_id
-export ALPACA_API_SECRET=your_paper_secret_key
+cp .env.example .env
+# edit .env with your paper key and secret
 ```
 
-3. Run:
+```
+ALPACA_API_KEY=your_paper_key_id
+ALPACA_API_SECRET=your_paper_secret_key
+```
+
+The app loads `.env` on startup. You can still `export` the same variables instead; exported values win.
+
+3. Run from the project root:
 
 ```bash
 mvn spring-boot:run
@@ -43,7 +50,7 @@ mvn spring-boot:run
 
 4. Open [http://localhost:8080](http://localhost:8080).
 
-Copy `.env.example` if you prefer a local env file; Spring reads `ALPACA_API_KEY` and `ALPACA_API_SECRET` from the environment.
+Do not put keys in `src/.env` or in `application.yml`. Restart the app after changing `.env`.
 
 ### Alpaca API configuration
 

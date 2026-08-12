@@ -15,6 +15,8 @@ public class ExpirationGroup {
     private boolean weekly;
     private int contractSize = 100;
     private boolean expanded;
+    private boolean earningsBeforeExpiration;
+    private LocalDate earningsDate;
     private List<StrikeRow> strikes = new ArrayList<>();
 
     public LocalDate getExpiration() {
@@ -55,6 +57,22 @@ public class ExpirationGroup {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
+    }
+
+    public boolean isEarningsBeforeExpiration() {
+        return earningsBeforeExpiration;
+    }
+
+    public void setEarningsBeforeExpiration(boolean earningsBeforeExpiration) {
+        this.earningsBeforeExpiration = earningsBeforeExpiration;
+    }
+
+    public LocalDate getEarningsDate() {
+        return earningsDate;
+    }
+
+    public void setEarningsDate(LocalDate earningsDate) {
+        this.earningsDate = earningsDate;
     }
 
     public List<StrikeRow> getStrikes() {

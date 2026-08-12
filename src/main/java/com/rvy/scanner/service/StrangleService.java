@@ -72,7 +72,22 @@ public class StrangleService {
                 }
             }
         }
-        return rankingService.rank(candidates, params);
+        List<StrangleCandidate> ranked = rankingService.rank(candidates, params);
+        annotate(chain, ranked);
+        return ranked;
+    }
+
+    private void annotate(OptionChain chain, List<StrangleCandidate> candidates) {
+        for (StrangleCandidate candidate : candidates) {
+            candidate.setIvVsHvPercentile(chain.getIvVsHvPercentile());
+            chain.getExpirations().stream()
+                    .filter(group -> group.getExpiration().equals(candidate.getExpiration()))
+                    .findFirst()
+                    .ifPresent(group -> {
+                        candidate.setEarningsBeforeExpiration(group.isEarningsBeforeExpiration());
+                        candidate.setEarningsDate(group.getEarningsDate());
+                    });
+        }
     }
 
     public StrangleCandidate toCandidate(

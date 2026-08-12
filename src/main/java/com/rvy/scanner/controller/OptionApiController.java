@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rvy.scanner.model.OptionChain;
 import com.rvy.scanner.model.StrangleCandidate;
 import com.rvy.scanner.model.StrategyParameters;
+import com.rvy.scanner.service.HistoryService;
 import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.web.StrategyParameterFactory;
@@ -22,14 +23,17 @@ public class OptionApiController {
     private final OptionChainService optionChainService;
     private final StrangleService strangleService;
     private final StrategyParameterFactory parameterFactory;
+    private final HistoryService historyService;
 
     public OptionApiController(
             OptionChainService optionChainService,
             StrangleService strangleService,
-            StrategyParameterFactory parameterFactory) {
+            StrategyParameterFactory parameterFactory,
+            HistoryService historyService) {
         this.optionChainService = optionChainService;
         this.strangleService = strangleService;
         this.parameterFactory = parameterFactory;
+        this.historyService = historyService;
     }
 
     @GetMapping("/chain/{symbol}")
@@ -52,7 +56,9 @@ public class OptionApiController {
         StrategyParameters params = parameterFactory.from(
                 minDelta, maxDelta, minTheta, minDte, maxDte, minPremium, maxSpread, minOpenInterest, minVolume);
         OptionChain chain = optionChainService.load(symbol);
-        return strangleService.scan(chain, params);
+        List<StrangleCandidate> candidates = strangleService.scan(chain, params);
+        historyService.save(chain, candidates);
+        return candidates;
     }
 
     @GetMapping("/strangle/{symbol}/{id}")
@@ -75,5 +81,10 @@ public class OptionApiController {
             throw new com.rvy.scanner.exception.MissingDataException("No strangle candidate with id " + id);
         }
         return match;
+    }
+
+    @GetMapping("/history")
+    public List<com.rvy.scanner.entity.SavedScan> history() {
+        return historyService.loadEvaluated();
     }
 }

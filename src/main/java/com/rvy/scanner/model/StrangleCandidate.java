@@ -24,6 +24,9 @@ public class StrangleCandidate {
     private double putDistancePct;
     private ExpectedMove expectedMove;
     private Double averageIv;
+    private Double ivVsHvPercentile;
+    private boolean earningsBeforeExpiration;
+    private LocalDate earningsDate;
     private Map<String, Double> scoreFactors = new LinkedHashMap<>();
 
     public String getId() {
@@ -192,6 +195,30 @@ public class StrangleCandidate {
 
     public void setAverageIv(Double averageIv) {
         this.averageIv = averageIv;
+    }
+
+    public Double getIvVsHvPercentile() {
+        return ivVsHvPercentile;
+    }
+
+    public void setIvVsHvPercentile(Double ivVsHvPercentile) {
+        this.ivVsHvPercentile = ivVsHvPercentile;
+    }
+
+    public boolean isEarningsBeforeExpiration() {
+        return earningsBeforeExpiration;
+    }
+
+    public void setEarningsBeforeExpiration(boolean earningsBeforeExpiration) {
+        this.earningsBeforeExpiration = earningsBeforeExpiration;
+    }
+
+    public LocalDate getEarningsDate() {
+        return earningsDate;
+    }
+
+    public void setEarningsDate(LocalDate earningsDate) {
+        this.earningsDate = earningsDate;
     }
 
     public Map<String, Double> getScoreFactors() {

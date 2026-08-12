@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Scan history</title>
+  <link rel="stylesheet" th:href="@{/css/scanner.css}"/>
+</head>
+<body>
+<header class="topbar">
+  <h1>Recommendation history</h1>
+  <nav>
+    <a href="/">Scanner</a>
+    &nbsp;|&nbsp;
+    <a href="/history">History</a>
+  </nav>
+</header>
+<main class="wrap">
+  <section class="panel">
+    <h2>Saved short strangles</h2>
+    <p class="spot">
+      Theoretical P/L assumes the strangle is held to the evaluation price (expiration if already expired).
+      Max adverse move is the largest high/low excursion from the underlying price at scan time.
+    </p>
+    <div th:if="${scans == null or scans.isEmpty()}" class="spot">No saved scans yet. Run a scan first.</div>
+    <div th:each="scan : ${scans}" class="detail block">
+      <h3>
+        <span th:text="${scan.symbol}">SPY</span>
+        &nbsp;
+        <span th:text="${scan.scannedAt}">time</span>
+        &nbsp; spot
+        <span th:text="${fmt.money(scan.underlyingPrice)}">$650</span>
+      </h3>
+      <table class="scan-table">
+        <thead>
+          <tr>
+            <th>Expiration</th>
+            <th>Put</th>
+            <th>Call</th>
+            <th>Premium</th>
+            <th>Latest spot</th>
+            <th>Between strikes?</th>
+            <th>Expired?</th>
+            <th>Theoretical P/L</th>
+            <th>Max adverse</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="row : ${scan.candidates}">
+            <td th:text="${row.expiration}">2026-08-21</td>
+            <td th:text="${fmt.strike(row.putStrike)}">$625</td>
+            <td th:text="${fmt.strike(row.callStrike)}">$680</td>
+            <td th:text="${fmt.px(row.totalPremium)}">0.68</td>
+            <td th:text="${row.latestUnderlying != null ? fmt.money(row.latestUnderlying) : '--'}">--</td>
+            <td th:text="${row.stayedBetweenStrikes == null ? '--' : (row.stayedBetweenStrikes ? 'Yes' : 'No')}">--</td>
+            <td th:text="${row.expired == null ? '--' : (row.expired ? 'Yes' : 'Open')}">--</td>
+            <td th:text="${row.theoreticalPl != null ? fmt.money(row.theoreticalPl) : '--'}">--</td>
+            <td th:text="${row.maxAdverseMove != null ? fmt.money(row.maxAdverseMove) : '--'}">--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <p class="disclaimer">
+    Historical P/L is hypothetical and ignores commissions, assignment, and changes in implied volatility.
+    This application never places live trades.
+  </p>
+</main>
+</body>
+</html>

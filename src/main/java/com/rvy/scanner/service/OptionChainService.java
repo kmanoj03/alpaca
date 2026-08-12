@@ -26,14 +26,20 @@ public class OptionChainService {
     private final AlpacaClient alpacaClient;
     private final OptionCalculationService calculations;
     private final ScannerProperties scannerProperties;
+    private final EarningsService earningsService;
+    private final IvRankService ivRankService;
 
     public OptionChainService(
             AlpacaClient alpacaClient,
             OptionCalculationService calculations,
-            ScannerProperties scannerProperties) {
+            ScannerProperties scannerProperties,
+            EarningsService earningsService,
+            IvRankService ivRankService) {
         this.alpacaClient = alpacaClient;
         this.calculations = calculations;
         this.scannerProperties = scannerProperties;
+        this.earningsService = earningsService;
+        this.ivRankService = ivRankService;
     }
 
     public OptionChain load(String symbol) {
@@ -44,7 +50,18 @@ public class OptionChainService {
         } catch (RuntimeException ex) {
             log.warn("Open interest unavailable for {}: {}", symbol, ex.getMessage());
         }
-        return build(symbol.toUpperCase(), price, contracts);
+        OptionChain chain = build(symbol.toUpperCase(), price, contracts);
+        try {
+            earningsService.apply(chain);
+        } catch (RuntimeException ex) {
+            log.info("Earnings enrichment skipped for {}: {}", symbol, ex.getMessage());
+        }
+        try {
+            ivRankService.apply(chain);
+        } catch (RuntimeException ex) {
+            log.info("IV vs HV enrichment skipped for {}: {}", symbol, ex.getMessage());
+        }
+        return chain;
     }
 
     public OptionChain build(String symbol, double underlyingPrice, List<OptionContract> contracts) {

@@ -34,7 +34,12 @@ class OptionChainServiceTest {
     void setUp() {
         Clock clock = Clock.fixed(Instant.parse("2026-08-09T16:00:00Z"), ZoneOffset.UTC);
         ScannerProperties properties = new ScannerProperties();
-        chainService = new OptionChainService(alpacaClient, new OptionCalculationService(clock), properties);
+        chainService = new OptionChainService(
+                alpacaClient,
+                new OptionCalculationService(clock),
+                properties,
+                org.mockito.Mockito.mock(com.rvy.scanner.service.EarningsService.class),
+                org.mockito.Mockito.mock(com.rvy.scanner.service.IvRankService.class));
     }
 
     @Test

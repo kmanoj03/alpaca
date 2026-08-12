@@ -12,6 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.rvy.scanner.config.ScannerProperties;
+import com.rvy.scanner.service.HistoryService;
 import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.web.FormatSupport;
@@ -29,6 +30,9 @@ class ScannerControllerTest {
 
     @MockitoBean
     private StrangleService strangleService;
+
+    @MockitoBean
+    private HistoryService historyService;
 
     @Test
     void homeRendersScannerView() throws Exception {

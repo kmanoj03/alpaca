@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.rvy.scanner.model.OptionChain;
 import com.rvy.scanner.model.StrangleCandidate;
 import com.rvy.scanner.model.StrategyParameters;
+import com.rvy.scanner.service.HistoryService;
 import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.web.StrategyParameterFactory;
@@ -21,14 +22,17 @@ public class ScannerController {
     private final OptionChainService optionChainService;
     private final StrangleService strangleService;
     private final StrategyParameterFactory parameterFactory;
+    private final HistoryService historyService;
 
     public ScannerController(
             OptionChainService optionChainService,
             StrangleService strangleService,
-            StrategyParameterFactory parameterFactory) {
+            StrategyParameterFactory parameterFactory,
+            HistoryService historyService) {
         this.optionChainService = optionChainService;
         this.strangleService = strangleService;
         this.parameterFactory = parameterFactory;
+        this.historyService = historyService;
     }
 
     @GetMapping("/")
@@ -55,6 +59,7 @@ public class ScannerController {
                 minDelta, maxDelta, minTheta, minDte, maxDte, minPremium, maxSpread, minOpenInterest, minVolume);
         OptionChain chain = optionChainService.load(symbol);
         List<StrangleCandidate> candidates = strangleService.scan(chain, params);
+        historyService.save(chain, candidates);
         java.util.Map<String, StrikeVisualization> vizById = new java.util.LinkedHashMap<>();
         for (StrangleCandidate candidate : candidates) {
             vizById.put(candidate.getId(), new StrikeVisualization(candidate));

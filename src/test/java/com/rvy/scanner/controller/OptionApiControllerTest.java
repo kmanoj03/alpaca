@@ -23,6 +23,7 @@ import com.rvy.scanner.exception.RestExceptionHandler;
 import com.rvy.scanner.model.OptionChain;
 import com.rvy.scanner.model.OptionContract;
 import com.rvy.scanner.model.StrangleCandidate;
+import com.rvy.scanner.service.HistoryService;
 import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.support.ContractFixtures;
@@ -40,6 +41,9 @@ class OptionApiControllerTest {
 
     @MockitoBean
     private StrangleService strangleService;
+
+    @MockitoBean
+    private HistoryService historyService;
 
     @Test
     void chainEndpointReturnsUnderlying() throws Exception {

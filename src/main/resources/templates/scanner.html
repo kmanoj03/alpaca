@@ -9,7 +9,11 @@
 <body>
 <header class="topbar">
   <h1>Alpaca Options Premium Scanner</h1>
-  <nav><a href="/">Scanner</a></nav>
+  <nav>
+    <a href="/">Scanner</a>
+    &nbsp;|&nbsp;
+    <a href="/history">History</a>
+  </nav>
 </header>
 
 <main class="wrap">
@@ -63,6 +67,14 @@
       <span th:text="${chain.underlyingSymbol}">SPY</span>
       &nbsp; Current price:
       <strong th:text="${fmt.money(chain.underlyingPrice)}">$0.00</strong>
+      <span th:if="${chain.ivVsHvPercentile != null}">
+        &nbsp;|&nbsp; IV vs HV percentile:
+        <strong th:text="${fmt.score(chain.ivVsHvPercentile)}">50</strong>
+      </span>
+      <span th:if="${chain.earningsDate != null}">
+        &nbsp;|&nbsp; Next earnings:
+        <strong th:text="${chain.earningsDate}">2026-01-01</strong>
+      </span>
     </p>
     <table class="chain-table">
       <thead>
@@ -79,7 +91,10 @@
       </thead>
       <tbody th:each="group, gStat : ${chain.expirations}">
         <tr class="group-row" th:attr="data-group=${gStat.index}">
-          <td colspan="2" th:text="${group.headerLabel + ' ' + group.contractSize}">14 Aug 26 (W) 100</td>
+          <td colspan="2">
+            <span th:text="${group.headerLabel + ' ' + group.contractSize}">14 Aug 26 (W) 100</span>
+            <span class="earnings-flag" th:if="${group.earningsBeforeExpiration}"> earnings before expiration</span>
+          </td>
           <td class="calls-label">Calls</td>
           <td class="dte" th:text="${group.dte + 'D'}">12D</td>
           <td class="puts-label">Puts</td>
@@ -155,6 +170,14 @@
         <div class="kv"><span>Expiration</span><span th:text="${c.expiration}">2026-08-21</span></div>
         <div class="kv"><span>DTE</span><span th:text="${c.dte}">12</span></div>
         <div class="kv"><span>Score</span><span th:text="${fmt.score(c.score)}">80</span></div>
+        <div class="kv" th:if="${c.ivVsHvPercentile != null}">
+          <span>IV vs HV percentile</span>
+          <span th:text="${fmt.score(c.ivVsHvPercentile)}">50</span>
+        </div>
+        <p class="earnings-flag" th:if="${c.earningsBeforeExpiration}">
+          Earnings before expiration
+          <span th:if="${c.earningsDate != null}" th:text="${'(' + c.earningsDate + ')'}">(date)</span>
+        </p>
 
         <div class="block">
           <strong>SHORT PUT</strong>

@@ -273,9 +273,19 @@ button:hover { background: #0f2a40; }
 .totals .kv { font-weight: 600; }
 .totals .kv span:first-child { color: var(--text); }
 
-.viz { margin-top: 8px; }
-.viz svg { width: 100%; height: 88px; }
-.viz-label { font-size: 9px; fill: var(--muted); }
+.viz { margin-top: 10px; }
+.viz svg { width: 100%; height: 64px; display: block; }
+.viz-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.viz-legend .put { color: #1b5e20; font-weight: 600; }
+.viz-legend .call { color: #8a1f11; font-weight: 600; }
+.viz-legend .spot { color: var(--accent); font-weight: 600; }
 
 .disclaimer {
   color: var(--muted);

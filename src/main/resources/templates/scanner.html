@@ -230,19 +230,21 @@
           </div>
         </div>
         <div class="viz" th:with="v=${vizById.get(c.id)}">
-          <svg viewBox="0 0 100 42" preserveAspectRatio="none">
-            <line x1="2" y1="22" x2="98" y2="22" stroke="#cfd6e0" stroke-width="0.6"/>
-            <line th:attr="x1=${v.putX(c)}, x2=${v.putX(c)}" y1="16" y2="28" stroke="#1b5e20" stroke-width="0.8"/>
-            <line th:attr="x1=${v.lowerX(c)}, x2=${v.lowerX(c)}" y1="18" y2="26" stroke="#6b7380" stroke-width="0.5" stroke-dasharray="1 1"/>
-            <line th:attr="x1=${v.spotX(c)}, x2=${v.spotX(c)}" y1="12" y2="32" stroke="#1f4e79" stroke-width="1.2"/>
-            <line th:attr="x1=${v.upperX(c)}, x2=${v.upperX(c)}" y1="18" y2="26" stroke="#6b7380" stroke-width="0.5" stroke-dasharray="1 1"/>
-            <line th:attr="x1=${v.callX(c)}, x2=${v.callX(c)}" y1="16" y2="28" stroke="#8a1f11" stroke-width="0.8"/>
-            <text class="viz-label" th:attr="x=${v.putX(c)}" y="8" text-anchor="middle">Put</text>
-            <text class="viz-label" th:attr="x=${v.spotX(c)}" y="8" text-anchor="middle">Spot</text>
-            <text class="viz-label" th:attr="x=${v.callX(c)}" y="8" text-anchor="middle">Call</text>
-            <text class="viz-label" th:attr="x=${v.lowerX(c)}" y="39" text-anchor="middle">Lo BE</text>
-            <text class="viz-label" th:attr="x=${v.upperX(c)}" y="39" text-anchor="middle">Up BE</text>
+          <svg viewBox="0 0 100 36" preserveAspectRatio="none">
+            <line x1="2" y1="18" x2="98" y2="18" stroke="#cfd6e0" stroke-width="0.6"/>
+            <line th:attr="x1=${v.putX(c)}, x2=${v.putX(c)}" y1="10" y2="26" stroke="#1b5e20" stroke-width="1.1"/>
+            <line th:attr="x1=${v.lowerX(c)}, x2=${v.lowerX(c)}" y1="12" y2="24" stroke="#6b7380" stroke-width="0.6" stroke-dasharray="1.2 1"/>
+            <line th:attr="x1=${v.spotX(c)}, x2=${v.spotX(c)}" y1="6" y2="30" stroke="#1f4e79" stroke-width="1.4"/>
+            <line th:attr="x1=${v.upperX(c)}, x2=${v.upperX(c)}" y1="12" y2="24" stroke="#6b7380" stroke-width="0.6" stroke-dasharray="1.2 1"/>
+            <line th:attr="x1=${v.callX(c)}, x2=${v.callX(c)}" y1="10" y2="26" stroke="#8a1f11" stroke-width="1.1"/>
           </svg>
+          <div class="viz-legend">
+            <span class="put">Put strike</span>
+            <span class="be">Lower BE</span>
+            <span class="spot">Spot</span>
+            <span class="be">Upper BE</span>
+            <span class="call">Call strike</span>
+          </div>
         </div>
       </div>
     </section>

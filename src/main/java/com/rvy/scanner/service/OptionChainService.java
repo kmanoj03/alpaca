@@ -70,6 +70,7 @@ public class OptionChainService {
         chain.setUnderlyingPrice(underlyingPrice);
         chain.setContracts(contracts == null ? List.of() : List.copyOf(contracts));
         chain.setExpirations(groupByExpiration(contracts == null ? List.of() : contracts));
+        markAtm(chain.getExpirations(), underlyingPrice);
         markExpanded(chain.getExpirations());
         return chain;
     }
@@ -111,6 +112,23 @@ public class OptionChainService {
             }
         }
         return new ArrayList<>(rows.values());
+    }
+
+    private void markAtm(List<ExpirationGroup> groups, double underlyingPrice) {
+        for (ExpirationGroup group : groups) {
+            StrikeRow nearest = null;
+            double best = Double.MAX_VALUE;
+            for (StrikeRow row : group.getStrikes()) {
+                double distance = Math.abs(row.getStrike() - underlyingPrice);
+                if (distance < best) {
+                    best = distance;
+                    nearest = row;
+                }
+            }
+            if (nearest != null) {
+                nearest.setAtm(true);
+            }
+        }
     }
 
     private void markExpanded(List<ExpirationGroup> groups) {

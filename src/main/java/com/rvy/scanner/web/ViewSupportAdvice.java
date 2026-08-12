@@ -3,7 +3,10 @@ package com.rvy.scanner.web;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-@ControllerAdvice
+import com.rvy.scanner.controller.HistoryController;
+import com.rvy.scanner.controller.ScannerController;
+
+@ControllerAdvice(assignableTypes = {ScannerController.class, HistoryController.class})
 public class ViewSupportAdvice {
 
     private final FormatSupport formatSupport;

@@ -4,14 +4,16 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Alpaca Options Premium Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
   <link rel="stylesheet" th:href="@{/css/scanner.css}"/>
 </head>
 <body>
 <header class="topbar">
   <h1>Alpaca Options Premium Scanner</h1>
   <nav>
-    <a href="/">Scanner</a>
-    &nbsp;|&nbsp;
+    <a href="/" class="active">Scanner</a>
     <a href="/history">History</a>
   </nav>
 </header>
@@ -55,104 +57,116 @@
       <label>Min volume
         <input type="number" name="minVolume" th:value="${params.minVolume}"/>
       </label>
-      <label class="actions">Scan
+      <div class="actions">
         <button type="submit">Load chain</button>
-      </label>
+      </div>
     </form>
   </section>
 
   <section class="panel" th:if="${chain != null}">
     <h2>Section A — Option chain</h2>
-    <p class="spot">
-      <span th:text="${chain.underlyingSymbol}">SPY</span>
-      &nbsp; Current price:
-      <strong th:text="${fmt.money(chain.underlyingPrice)}">$0.00</strong>
-      <span th:if="${chain.ivVsHvPercentile != null}">
-        &nbsp;|&nbsp; IV vs HV percentile:
-        <strong th:text="${fmt.score(chain.ivVsHvPercentile)}">50</strong>
+    <div class="spot-bar">
+      <span class="spot-symbol" th:text="${chain.underlyingSymbol}">SPY</span>
+      <span class="spot-price" th:text="${fmt.money(chain.underlyingPrice)}">$0.00</span>
+      <span class="spot-meta" th:if="${chain.ivVsHvPercentile != null}">
+        IV vs HV <strong th:text="${fmt.score(chain.ivVsHvPercentile)}">50</strong>
       </span>
-      <span th:if="${chain.earningsDate != null}">
-        &nbsp;|&nbsp; Next earnings:
-        <strong th:text="${chain.earningsDate}">2026-01-01</strong>
+      <span class="spot-meta" th:if="${chain.earningsDate != null}">
+        Earnings <strong th:text="${chain.earningsDate}">2026-01-01</strong>
       </span>
-    </p>
-    <table class="chain-table">
-      <thead>
-        <tr>
-          <th colspan="3">CALLS</th>
-          <th>STRIKE</th>
-          <th colspan="3">PUTS</th>
-        </tr>
-        <tr>
-          <th>Ask</th><th>Theta</th><th>Bid</th>
-          <th></th>
-          <th>Bid</th><th>Theta</th><th>Ask</th>
-        </tr>
-      </thead>
-      <tbody th:each="group, gStat : ${chain.expirations}">
-        <tr class="group-row" th:attr="data-group=${gStat.index}">
-          <td colspan="2">
-            <span th:text="${group.headerLabel + ' ' + group.contractSize}">14 Aug 26 (W) 100</span>
-            <span class="earnings-flag" th:if="${group.earningsBeforeExpiration}"> earnings before expiration</span>
-          </td>
-          <td class="calls-label">Calls</td>
-          <td class="dte" th:text="${group.dte + 'D'}">12D</td>
-          <td class="puts-label">Puts</td>
-          <td></td>
-          <td class="toggle" th:text="${group.expanded} ? '▲' : '▼'">▼</td>
-        </tr>
-        <tr th:each="row : ${group.strikes}"
-            th:classappend="${!group.expanded} ? ' hidden'"
-            th:attr="data-rows=${gStat.index}">
-          <td class="ask" th:text="${fmt.px(row.call?.ask)}">--</td>
-          <td class="theta" th:text="${fmt.theta(row.call?.theta)}">--</td>
-          <td class="bid" th:text="${fmt.px(row.call?.bid)}">--</td>
-          <td class="strike" th:text="${fmt.strike(row.strike)}">$300</td>
-          <td class="bid" th:text="${fmt.px(row.put?.bid)}">--</td>
-          <td class="theta" th:text="${fmt.theta(row.put?.theta)}">--</td>
-          <td class="ask" th:text="${fmt.px(row.put?.ask)}">--</td>
-        </tr>
-      </tbody>
-    </table>
+      <span class="hint">Click an expiration to expand. One group open at a time.</span>
+    </div>
+    <div class="chain-wrap">
+      <table class="chain-table">
+        <colgroup>
+          <col class="w-px"/><col class="w-th"/><col class="w-px"/>
+          <col class="w-strike"/>
+          <col class="w-px"/><col class="w-th"/><col class="w-px"/>
+        </colgroup>
+        <thead>
+          <tr class="side-head">
+            <th colspan="3" class="calls-head">CALLS</th>
+            <th class="strike-head">STRIKE</th>
+            <th colspan="3" class="puts-head">PUTS</th>
+          </tr>
+          <tr class="col-head">
+            <th>Ask</th><th>Theta</th><th>Bid</th>
+            <th></th>
+            <th>Bid</th><th>Theta</th><th>Ask</th>
+          </tr>
+        </thead>
+        <tbody th:each="group, gStat : ${chain.expirations}">
+          <tr class="group-row" th:classappend="${group.expanded} ? ' open'" th:attr="data-group=${gStat.index}">
+            <td colspan="7">
+              <div class="exp-bar">
+                <span class="exp-date">
+                  <span th:text="${group.headerLabel}">14 Aug 26 (W)</span>
+                  <span class="mult" th:text="${group.contractSize}">100</span>
+                  <span class="earnings-flag" th:if="${group.earningsBeforeExpiration}">earnings</span>
+                </span>
+                <span class="side-tag call-tag">Calls</span>
+                <span class="dte" th:text="${group.dte + 'D'}">12D</span>
+                <span class="side-tag put-tag">Puts</span>
+                <span class="toggle" th:text="${group.expanded} ? '▲' : '▼'">▼</span>
+              </div>
+            </td>
+          </tr>
+          <tr class="strike-row"
+              th:each="row : ${group.strikes}"
+              th:classappend="${(!group.expanded ? ' hidden' : '') + (row.atm ? ' atm' : '')}"
+              th:attr="data-rows=${gStat.index}">
+            <td class="ask" th:text="${fmt.px(row.call?.ask)}">--</td>
+            <td class="theta" th:text="${fmt.theta(row.call?.theta)}">--</td>
+            <td class="bid" th:text="${fmt.px(row.call?.bid)}">--</td>
+            <td class="strike" th:text="${fmt.strike(row.strike)}">$300</td>
+            <td class="bid" th:text="${fmt.px(row.put?.bid)}">--</td>
+            <td class="theta" th:text="${fmt.theta(row.put?.theta)}">--</td>
+            <td class="ask" th:text="${fmt.px(row.put?.ask)}">--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <div class="layout" th:if="${candidates != null}">
     <section class="panel">
       <h2>Section B — Recommended short strangle candidates</h2>
-      <table class="scan-table" id="strangle-table" th:if="${!candidates.isEmpty()}">
-        <thead>
-          <tr>
-            <th data-sort="num">Rank</th>
-            <th data-sort="text">Expiration</th>
-            <th data-sort="num">DTE</th>
-            <th data-sort="num">Put strike</th>
-            <th data-sort="num">Put delta</th>
-            <th data-sort="num">Put theta</th>
-            <th data-sort="num">Call strike</th>
-            <th data-sort="num">Call delta</th>
-            <th data-sort="num">Call theta</th>
-            <th data-sort="num">Premium</th>
-            <th data-sort="num">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="c, stat : ${candidates}"
-              th:classappend="${stat.first} ? ' active'"
-              th:attr="data-id=${c.id}">
-            <td th:text="${c.rank}" th:attr="data-value=${c.rank}">1</td>
-            <td th:text="${c.expiration}">2026-08-21</td>
-            <td th:text="${c.dte}" th:attr="data-value=${c.dte}">12</td>
-            <td th:text="${fmt.strike(c.putStrike)}" th:attr="data-value=${c.putStrike}">$625</td>
-            <td th:text="${fmt.delta(c.putDelta)}" th:attr="data-value=${c.putDelta}">-0.07</td>
-            <td th:text="${fmt.theta(c.putTheta)}" th:attr="data-value=${c.putTheta}">-0.016</td>
-            <td th:text="${fmt.strike(c.callStrike)}" th:attr="data-value=${c.callStrike}">$680</td>
-            <td th:text="${fmt.delta(c.callDelta)}" th:attr="data-value=${c.callDelta}">0.08</td>
-            <td th:text="${fmt.theta(c.callTheta)}" th:attr="data-value=${c.callTheta}">-0.018</td>
-            <td th:text="${fmt.px(c.totalPremium)}" th:attr="data-value=${c.totalPremium}">0.675</td>
-            <td th:text="${fmt.score(c.score)}" th:attr="data-value=${c.score}">80.0</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrap" th:if="${!candidates.isEmpty()}">
+        <table class="scan-table" id="strangle-table">
+          <thead>
+            <tr>
+              <th data-sort="num">Rank</th>
+              <th data-sort="text">Expiration</th>
+              <th data-sort="num">DTE</th>
+              <th data-sort="num">Put strike</th>
+              <th data-sort="num">Put delta</th>
+              <th data-sort="num">Put theta</th>
+              <th data-sort="num">Call strike</th>
+              <th data-sort="num">Call delta</th>
+              <th data-sort="num">Call theta</th>
+              <th data-sort="num">Premium</th>
+              <th data-sort="num">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="c, stat : ${candidates}"
+                th:classappend="${stat.first} ? ' active'"
+                th:attr="data-id=${c.id}">
+              <td th:text="${c.rank}" th:attr="data-value=${c.rank}">1</td>
+              <td th:text="${fmt.expShort(c.expiration)}" th:attr="data-value=${c.expiration}">Aug 21</td>
+              <td th:text="${c.dte}" th:attr="data-value=${c.dte}">12</td>
+              <td th:text="${fmt.strike(c.putStrike)}" th:attr="data-value=${c.putStrike}">$625</td>
+              <td th:text="${fmt.delta(c.putDelta)}" th:attr="data-value=${c.putDelta}">-0.07</td>
+              <td class="theta" th:text="${fmt.theta(c.putTheta)}" th:attr="data-value=${c.putTheta}">-0.016</td>
+              <td th:text="${fmt.strike(c.callStrike)}" th:attr="data-value=${c.callStrike}">$680</td>
+              <td th:text="${fmt.delta(c.callDelta)}" th:attr="data-value=${c.callDelta}">0.08</td>
+              <td class="theta" th:text="${fmt.theta(c.callTheta)}" th:attr="data-value=${c.callTheta}">-0.018</td>
+              <td th:text="${fmt.premium(c.totalPremium)}" th:attr="data-value=${c.totalPremium}">$0.675</td>
+              <td th:text="${fmt.score(c.score)}" th:attr="data-value=${c.score}">80.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p class="spot" th:if="${candidates.isEmpty()}">No short-strangle candidates matched the current filters.</p>
     </section>
 
@@ -162,73 +176,72 @@
            th:id="${'detail-' + c.id}"
            class="candidate-detail detail"
            th:classappend="${!stat.first} ? ' hidden'">
-        <h3>
-          SHORT STRANGLE
-          <span th:text="${c.underlyingSymbol}">SPY</span>
-        </h3>
-        <div class="kv"><span>Current price</span><span th:text="${fmt.money(c.underlyingPrice)}">$650</span></div>
-        <div class="kv"><span>Expiration</span><span th:text="${c.expiration}">2026-08-21</span></div>
-        <div class="kv"><span>DTE</span><span th:text="${c.dte}">12</span></div>
-        <div class="kv"><span>Score</span><span th:text="${fmt.score(c.score)}">80</span></div>
-        <div class="kv" th:if="${c.ivVsHvPercentile != null}">
-          <span>IV vs HV percentile</span>
-          <span th:text="${fmt.score(c.ivVsHvPercentile)}">50</span>
-        </div>
-        <p class="earnings-flag" th:if="${c.earningsBeforeExpiration}">
-          Earnings before expiration
-          <span th:if="${c.earningsDate != null}" th:text="${'(' + c.earningsDate + ')'}">(date)</span>
-        </p>
-
         <div class="block">
-          <strong>SHORT PUT</strong>
+          <div class="block-title">UNDERLYING</div>
+          <div class="block-hero" th:text="${c.underlyingSymbol}">SPY</div>
+          <div class="kv"><span>Current Price</span><span th:text="${fmt.money(c.underlyingPrice)}">$650.00</span></div>
+        </div>
+        <div class="block">
+          <div class="block-title">EXPIRATION</div>
+          <div class="block-hero" th:text="${fmt.expLong(c.expiration)}">Aug 21, 2026</div>
+          <div class="kv"><span>DTE</span><span th:text="${c.dte}">12</span></div>
+          <div class="kv"><span>Score</span><span th:text="${fmt.score(c.score)}">80</span></div>
+          <div class="kv" th:if="${c.ivVsHvPercentile != null}">
+            <span>IV vs HV percentile</span>
+            <span th:text="${fmt.score(c.ivVsHvPercentile)}">50</span>
+          </div>
+          <p class="earnings-flag" th:if="${c.earningsBeforeExpiration}">
+            Earnings before expiration
+            <span th:if="${c.earningsDate != null}" th:text="${'(' + c.earningsDate + ')'}">(date)</span>
+          </p>
+        </div>
+        <div class="block">
+          <div class="block-title">SHORT PUT</div>
           <div class="kv"><span>Strike</span><span th:text="${fmt.strike(c.putStrike)}">$625</span></div>
           <div class="kv"><span>Delta</span><span th:text="${fmt.delta(c.putDelta)}">-0.07</span></div>
           <div class="kv"><span>Theta</span><span th:text="${fmt.theta(c.putTheta)}">-0.016</span></div>
-          <div class="kv"><span>Bid / Ask / Mid</span>
-            <span th:text="${fmt.px(c.put.bid) + ' / ' + fmt.px(c.put.ask) + ' / ' + fmt.px(c.put.mid)}">0.28 / 0.32 / 0.30</span>
-          </div>
+          <div class="kv"><span>Bid</span><span class="bid" th:text="${fmt.px(c.put.bid)}">0.28</span></div>
+          <div class="kv"><span>Ask</span><span class="ask" th:text="${fmt.px(c.put.ask)}">0.32</span></div>
+          <div class="kv"><span>Mid</span><span th:text="${fmt.px(c.put.mid)}">0.30</span></div>
           <div class="kv"><span>IV</span><span th:text="${fmt.iv(c.put.impliedVolatility)}">--</span></div>
           <div class="kv"><span>Volume</span><span th:text="${c.put.volume}">0</span></div>
-          <div class="kv"><span>Open interest</span><span th:text="${c.put.openInterest != null ? c.put.openInterest : '--'}">--</span></div>
+          <div class="kv"><span>Open Interest</span><span th:text="${c.put.openInterest != null ? c.put.openInterest : '--'}">--</span></div>
         </div>
-
         <div class="block">
-          <strong>SHORT CALL</strong>
+          <div class="block-title">SHORT CALL</div>
           <div class="kv"><span>Strike</span><span th:text="${fmt.strike(c.callStrike)}">$680</span></div>
           <div class="kv"><span>Delta</span><span th:text="${fmt.delta(c.callDelta)}">0.08</span></div>
           <div class="kv"><span>Theta</span><span th:text="${fmt.theta(c.callTheta)}">-0.018</span></div>
-          <div class="kv"><span>Bid / Ask / Mid</span>
-            <span th:text="${fmt.px(c.call.bid) + ' / ' + fmt.px(c.call.ask) + ' / ' + fmt.px(c.call.mid)}">0.35 / 0.40 / 0.375</span>
-          </div>
+          <div class="kv"><span>Bid</span><span class="bid" th:text="${fmt.px(c.call.bid)}">0.35</span></div>
+          <div class="kv"><span>Ask</span><span class="ask" th:text="${fmt.px(c.call.ask)}">0.40</span></div>
+          <div class="kv"><span>Mid</span><span th:text="${fmt.px(c.call.mid)}">0.375</span></div>
           <div class="kv"><span>IV</span><span th:text="${fmt.iv(c.call.impliedVolatility)}">--</span></div>
           <div class="kv"><span>Volume</span><span th:text="${c.call.volume}">0</span></div>
-          <div class="kv"><span>Open interest</span><span th:text="${c.call.openInterest != null ? c.call.openInterest : '--'}">--</span></div>
+          <div class="kv"><span>Open Interest</span><span th:text="${c.call.openInterest != null ? c.call.openInterest : '--'}">--</span></div>
         </div>
-
-        <div class="block">
-          <div class="kv"><span>Total premium</span><span th:text="${fmt.px(c.totalPremium)}">0.675</span></div>
-          <div class="kv"><span>Premium / contract</span><span th:text="${fmt.money(c.premiumPerContract)}">$67.50</span></div>
-          <div class="kv"><span>Lower breakeven</span><span th:text="${fmt.money(c.lowerBreakeven)}">$624.33</span></div>
-          <div class="kv"><span>Upper breakeven</span><span th:text="${fmt.money(c.upperBreakeven)}">$680.68</span></div>
+        <div class="block totals">
+          <div class="kv"><span>TOTAL PREMIUM</span><span th:text="${fmt.premium(c.totalPremium)}">$0.675</span></div>
+          <div class="kv"><span>PREMIUM / CONTRACT</span><span th:text="${fmt.money(c.premiumPerContract)}">$67.50</span></div>
+          <div class="kv"><span>LOWER BREAKEVEN</span><span th:text="${fmt.money(c.lowerBreakeven)}">$624.33</span></div>
+          <div class="kv"><span>UPPER BREAKEVEN</span><span th:text="${fmt.money(c.upperBreakeven)}">$680.68</span></div>
           <div class="kv" th:if="${c.expectedMove != null and c.expectedMove.used != null}">
-            <span>Expected move</span>
+            <span>EXPECTED MOVE</span>
             <span th:text="${fmt.money(c.expectedMove.used)}">$10</span>
           </div>
         </div>
-
         <div class="viz" th:with="v=${vizById.get(c.id)}">
-          <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+          <svg viewBox="0 0 100 42" preserveAspectRatio="none">
             <line x1="2" y1="22" x2="98" y2="22" stroke="#cfd6e0" stroke-width="0.6"/>
             <line th:attr="x1=${v.putX(c)}, x2=${v.putX(c)}" y1="16" y2="28" stroke="#1b5e20" stroke-width="0.8"/>
             <line th:attr="x1=${v.lowerX(c)}, x2=${v.lowerX(c)}" y1="18" y2="26" stroke="#6b7380" stroke-width="0.5" stroke-dasharray="1 1"/>
-            <line th:attr="x1=${v.spotX(c)}, x2=${v.spotX(c)}" y1="12" y2="32" stroke="#1f4e79" stroke-width="1"/>
+            <line th:attr="x1=${v.spotX(c)}, x2=${v.spotX(c)}" y1="12" y2="32" stroke="#1f4e79" stroke-width="1.2"/>
             <line th:attr="x1=${v.upperX(c)}, x2=${v.upperX(c)}" y1="18" y2="26" stroke="#6b7380" stroke-width="0.5" stroke-dasharray="1 1"/>
             <line th:attr="x1=${v.callX(c)}, x2=${v.callX(c)}" y1="16" y2="28" stroke="#8a1f11" stroke-width="0.8"/>
             <text class="viz-label" th:attr="x=${v.putX(c)}" y="8" text-anchor="middle">Put</text>
             <text class="viz-label" th:attr="x=${v.spotX(c)}" y="8" text-anchor="middle">Spot</text>
             <text class="viz-label" th:attr="x=${v.callX(c)}" y="8" text-anchor="middle">Call</text>
-            <text class="viz-label" th:attr="x=${v.lowerX(c)}" y="38" text-anchor="middle">Lo BE</text>
-            <text class="viz-label" th:attr="x=${v.upperX(c)}" y="38" text-anchor="middle">Up BE</text>
+            <text class="viz-label" th:attr="x=${v.lowerX(c)}" y="39" text-anchor="middle">Lo BE</text>
+            <text class="viz-label" th:attr="x=${v.upperX(c)}" y="39" text-anchor="middle">Up BE</text>
           </svg>
         </div>
       </div>

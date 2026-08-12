@@ -1,13 +1,31 @@
 (function () {
+  function collapseAll() {
+    document.querySelectorAll(".group-row").forEach(function (row) {
+      row.classList.remove("open");
+      var toggle = row.querySelector(".toggle");
+      if (toggle) {
+        toggle.textContent = "▼";
+      }
+    });
+    document.querySelectorAll(".strike-row").forEach(function (el) {
+      el.classList.add("hidden");
+    });
+  }
+
   document.querySelectorAll(".group-row").forEach(function (row) {
     row.addEventListener("click", function () {
       var id = row.getAttribute("data-group");
-      document.querySelectorAll('[data-rows="' + id + '"]').forEach(function (el) {
-        el.classList.toggle("hidden");
-      });
-      var toggle = row.querySelector(".toggle");
-      if (toggle) {
-        toggle.textContent = toggle.textContent === "▼" ? "▲" : "▼";
+      var wasOpen = row.classList.contains("open");
+      collapseAll();
+      if (!wasOpen) {
+        row.classList.add("open");
+        var toggle = row.querySelector(".toggle");
+        if (toggle) {
+          toggle.textContent = "▲";
+        }
+        document.querySelectorAll('.strike-row[data-rows="' + id + '"]').forEach(function (el) {
+          el.classList.remove("hidden");
+        });
       }
     });
   });
@@ -47,7 +65,7 @@
         bv = parseFloat(bv);
         return dir === "asc" ? av - bv : bv - av;
       }
-      return dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+      return dir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
     });
     rows.forEach(function (row) { tbody.appendChild(row); });
   }

@@ -64,6 +64,8 @@ class OptionChainServiceTest {
         assertThat(first.getStrikes().get(0).getStrike()).isEqualTo(625.0);
         assertThat(first.getStrikes().get(0).getPut()).isNotNull();
         assertThat(first.getStrikes().get(1).getCall()).isNotNull();
+        assertThat(first.getStrikes().get(0).isAtm()).isTrue();
+        assertThat(first.getStrikes().get(1).isAtm()).isFalse();
 
         ExpirationGroup second = chain.getExpirations().get(1);
         assertThat(second.isWeekly()).isFalse();

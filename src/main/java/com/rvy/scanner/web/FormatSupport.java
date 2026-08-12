@@ -33,6 +33,38 @@ public class FormatSupport {
         return score(Double.valueOf(value));
     }
 
+    public String exp(java.time.LocalDate date) {
+        if (date == null) {
+            return "--";
+        }
+        return date.format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yy", java.util.Locale.US));
+    }
+
+    public String expShort(java.time.LocalDate date) {
+        if (date == null) {
+            return "--";
+        }
+        return date.format(java.time.format.DateTimeFormatter.ofPattern("MMM d", java.util.Locale.US));
+    }
+
+    public String expLong(java.time.LocalDate date) {
+        if (date == null) {
+            return "--";
+        }
+        return date.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy", java.util.Locale.US));
+    }
+
+    public String premium(Double value) {
+        if (value == null) {
+            return "--";
+        }
+        return "$" + String.format(Locale.US, "%.3f", value);
+    }
+
+    public String premium(double value) {
+        return premium(Double.valueOf(value));
+    }
+
     public String strike(double value) {
         if (value == Math.rint(value)) {
             return "$" + String.format(Locale.US, "%,.0f", value);

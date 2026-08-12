@@ -5,6 +5,7 @@ public class StrikeRow {
     private double strike;
     private OptionContract call;
     private OptionContract put;
+    private boolean atm;
 
     public StrikeRow() {
     }
@@ -35,5 +36,13 @@ public class StrikeRow {
 
     public void setPut(OptionContract put) {
         this.put = put;
+    }
+
+    public boolean isAtm() {
+        return atm;
+    }
+
+    public void setAtm(boolean atm) {
+        this.atm = atm;
     }
 }

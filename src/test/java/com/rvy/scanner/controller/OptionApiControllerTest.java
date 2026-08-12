@@ -27,10 +27,11 @@ import com.rvy.scanner.service.HistoryService;
 import com.rvy.scanner.service.OptionChainService;
 import com.rvy.scanner.service.StrangleService;
 import com.rvy.scanner.support.ContractFixtures;
+import com.rvy.scanner.web.FormatSupport;
 import com.rvy.scanner.web.StrategyParameterFactory;
 
 @WebMvcTest(controllers = OptionApiController.class)
-@Import({StrategyParameterFactory.class, ScannerProperties.class, RestExceptionHandler.class})
+@Import({StrategyParameterFactory.class, ScannerProperties.class, RestExceptionHandler.class, FormatSupport.class})
 class OptionApiControllerTest {
 
     @Autowired

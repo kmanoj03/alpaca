@@ -61,9 +61,9 @@ Do not put keys in `src/.env` or in `application.yml`. Restart the app after cha
 | `alpaca.trade-base-url` | `https://paper-api.alpaca.markets` | Option contracts (open interest) |
 | `alpaca.chain-page-limit` | `1000` | Pagination page size; client follows `next_page_token` |
 
-The `feed` query param is omitted so Alpaca uses OPRA when subscribed, otherwise the indicative feed.
+Option-chain snapshots omit `feed` so Alpaca uses OPRA when subscribed, otherwise the indicative feed. Daily stock bars (IV vs HV and history P/L) request `feed=iex` because paper keys cannot query SIP.
 
-Open interest is **not** on the snapshots endpoint. The app joins `GET /v2/options/contracts`. Volume comes from `dailyBar.v` when present.
+Open interest is **not** on the snapshots endpoint. The app joins `GET /v2/options/contracts`. Volume comes from `dailyBar.v` when present. On paper accounts OI is often missing and treated as `0`, so the example `minOpenInterest=500` can yield an empty scanner even when the chain loaded. Lower OI / widen max spread in the form if that happens.
 
 ## UI instructions
 
@@ -187,15 +187,15 @@ Coverage includes:
 
 ## Screenshots
 
-After a live run against paper keys, capture:
+Live paper-trading captures (SPY) are in [`screenshots/`](screenshots/):
 
-1. Option chain
-2. Expanded expiration
-3. Filtered / scanned view
-4. Short strangle candidates
-5. Candidate details
+1. [`01-option-chain.png`](screenshots/01-option-chain.png) — collapsed Calls | Strike | Puts expirations
+2. [`02-expanded-expiration.png`](screenshots/02-expanded-expiration.png) — one expiration expanded around ATM
+3. [`03-filtered-options.png`](screenshots/03-filtered-options.png) — strategy parameters and ranked results
+4. [`04-strangle-candidates.png`](screenshots/04-strangle-candidates.png) — sortable short-strangle table
+5. [`05-candidate-details.png`](screenshots/05-candidate-details.png) — selected candidate, breakevens, strike map
 
-Place files in [`screenshots/`](screenshots/README.md).
+QQQ and AAPL use the same UI; enter the symbol and click **Load chain**.
 
 ## Risk disclaimer
 

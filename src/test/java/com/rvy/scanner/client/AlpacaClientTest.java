@@ -171,6 +171,30 @@ class AlpacaClientTest {
     }
 
     @Test
+    void fetchDailyBarsUsesIexFeedForPaperAccounts() throws Exception {
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setBody("""
+                        {
+                          "bars": [
+                            { "t": "2026-08-11T04:00:00Z", "o": 770.0, "h": 773.0, "l": 768.0, "c": 772.5, "v": 1000 }
+                          ],
+                          "next_page_token": null
+                        }
+                        """));
+
+        assertThat(client.fetchDailyBars("SPY", java.time.LocalDate.of(2026, 8, 1), java.time.LocalDate.of(2026, 8, 12)))
+                .hasSize(1)
+                .first()
+                .extracting(com.rvy.scanner.model.StockBar::getClose)
+                .isEqualTo(772.5);
+
+        RecordedRequest request = server.takeRequest(1, TimeUnit.SECONDS);
+        assertThat(request.getRequestUrl().queryParameter("feed")).isEqualTo("iex");
+        assertThat(request.getPath()).contains("/v2/stocks/SPY/bars");
+    }
+
+    @Test
     void fetchOpenInterestJoinsByOccSymbol() {
         server.enqueue(new MockResponse()
                 .setHeader("Content-Type", "application/json")

@@ -151,11 +151,11 @@ Alpaca theta is Black-Scholes **daily** change in the option *price* (typically 
 
 ### IV vs HV percentile (not IV Rank)
 
-Alpaca snapshots do not provide a historical IV series, so true IV Rank/percentile is not available. The app builds 30-day **historical volatility** from one year of daily bars and ranks current ATM IV against that HV distribution. The UI labels this **IV vs HV percentile**.
+Alpaca snapshots do not provide a historical IV series, so true IV Rank/percentile is not available. The app builds 30-day **historical volatility** from one year of daily bars (`feed=iex`, which paper accounts can query) and ranks current ATM IV against that HV distribution. The UI labels this **IV vs HV percentile**. SIP bars are not used; a paper key cannot subscribe to SIP.
 
 ### Earnings
 
-Best-effort Yahoo `calendarEvents` lookup (no extra API key). Fail-open: if the call fails, the chain still loads. Expirations with earnings on or before expiry are flagged.
+Best-effort Yahoo `calendarEvents` lookup (crumb + cookie, no extra API key). Fail-open: if Yahoo rate-limits or rejects the call, the chain still loads and the lookup is skipped for a few minutes instead of retrying on every scan. Expirations with earnings on or before expiry are flagged.
 
 ### Historical P/L
 

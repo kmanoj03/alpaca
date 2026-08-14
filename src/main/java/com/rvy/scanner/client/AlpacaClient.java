@@ -169,7 +169,8 @@ public class AlpacaClient {
                     .queryParam("start", start.toString())
                     .queryParam("end", end.toString())
                     .queryParam("limit", 10000)
-                    .queryParam("adjustment", "split");
+                    .queryParam("adjustment", "split")
+                    .queryParam("feed", "iex");
             if (pageToken != null) {
                 builder.queryParam("page_token", pageToken);
             }
